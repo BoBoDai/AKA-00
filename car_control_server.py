@@ -1,3 +1,6 @@
+import fcntl
+import socket
+import struct
 import time
 
 from flask import Flask, request, jsonify, render_template
@@ -14,9 +17,26 @@ servo.set_speed(1, 1500)
 servo.set_speed(2, 1500)
 servo.set_speed(3, 1500)
 
+def get_ip(ifname="wlan0"):
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    return socket.inet_ntoa(
+        fcntl.ioctl(
+            s.fileno(),
+            0x8915,
+            struct.pack('256s', ifname[:15].encode('utf-8'))
+        )[20:24]
+    )
+
+
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.route("/ip")
+def ip():
+    return jsonify({
+        "ip": get_ip()
+    })
 
 @app.route('/control', methods=['GET'])
 def control():
