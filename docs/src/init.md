@@ -47,3 +47,8 @@ ps | grep avahi
 ```
 为
 <主机名>-<冲突后缀>.local
+
+7. 生成证书
+```shell
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
+```

@@ -1,6 +1,7 @@
 import fcntl
 import socket
 import struct
+import threading
 import time
 
 from flask import Flask, request, jsonify, render_template
@@ -69,5 +70,13 @@ def control():
 
     return jsonify({"status": "success", "action": action})
 
-if __name__ == '__main__':
+def run_http():
     app.run(host='0.0.0.0', port=80)
+
+
+def run_https():
+    app.run(host='0.0.0.0', port=443, ssl_context=('cert.pem', 'key.pem'))
+
+if __name__ == '__main__':
+    threading.Thread(target=run_http).start()
+    threading.Thread(target=run_https).start()
