@@ -1,0 +1,3 @@
+#!/bin/bash
+devmem 0x03001070 32 0x2
+devmem 0x03001074 32 0x2
