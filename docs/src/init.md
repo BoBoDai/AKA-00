@@ -68,3 +68,55 @@ openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 3650 -nod
 # 无交互生成自签名证书，有效期10年（3650天）
 openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 3650 -nodes -subj "/C=CN/ST=Beijing/L=Beijing/O=MyOrg/OU=MyDept/CN=localhost"
 
+8. 开机自启动
+
+在/etc/init.d 文件中 添加 一个appinit文件，输入
+
+```shell
+#!/bin/sh
+# 程序路径
+APP_PATH="/root/AKA-00"
+# 程序运行用户（一般嵌入式用 root）
+RUN_USER="root"
+
+# 启动函数
+start() {
+	chmod +x /root/AKA-00/init.sh
+	/root/AKA-00/init.sh
+}
+
+# 停止函数（可选，便于手动管理）
+stop() {}
+
+# 重启函数（可选）
+restart() {
+    stop
+    sleep 1
+    start
+}
+
+# 脚本参数处理
+case "$1" in
+    start)
+        start
+        ;;
+    stop)
+        stop
+        ;;
+    restart)
+        restart
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+exit 0
+```
+
+之后在 /etc/inittab 中加入一行，就可以开机自启动，代码要放在AKA-00下
+
+```
+app::sysinit:/etc/init.d/appinit start
+```
