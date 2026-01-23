@@ -1,5 +1,7 @@
 1. 连接网络
-在win上，通过usb共享网络之后进行一些配置
+方式一、通过wifi直接连接网络
+
+方式二、在win上，通过usb共享网络之后进行一些配置
 ```shell
 ip addr flush dev usb0
 ip addr add 192.168.137.100/24 dev usb0
@@ -11,29 +13,31 @@ ip route add default via 192.168.137.1
 echo "nameserver 8.8.8.8" > /etc/resolv.conf
 ```
 
-2. 配置python虚拟环境
-```python
-python -m venv chenlong
-source chenlong/bin/activate
-```
-
-3. 下载代码
-
-
-4. 安装依赖
+2. 安装依赖
 
 ```python
-python -m pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 5. 运行程序
 
 ```python
-python car_control_server.py
+python3 car_control_server.py
 ```
+
 后台启动##
 ```python
-nohup python car_control_server.py > app.log 2>&1 &
+nohup python3 car_control_server.py > app.log 2>&1 &
+```
+
+6. 开机自启动脚本
+
+在 /etc/init.d下新建配置文件 S99appinit
+
+输入
+
+```shell
+
 ```
 
 6. mDNS配置
@@ -43,7 +47,7 @@ ps | grep avahi
 ```
 可以发现
 ```shell
-470 avahi    avahi-daemon: running [licheervnano-366e.local]
+470 avahi avahi-daemon: running [licheervnano-366e.local]
 ```
 为
 <主机名>-<冲突后缀>.local
@@ -58,5 +62,9 @@ avahi-daemon.conf
 
 7. 生成证书
 ```shell
-openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 3650 -nodes
 ```
+
+# 无交互生成自签名证书，有效期10年（3650天）
+openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 3650 -nodes -subj "/C=CN/ST=Beijing/L=Beijing/O=MyOrg/OU=MyDept/CN=localhost"
+
